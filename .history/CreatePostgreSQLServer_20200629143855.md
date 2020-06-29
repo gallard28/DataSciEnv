@@ -163,7 +163,7 @@ cd /etc/postgresql/12/main
 
 I will edit the `pg_hba.conf` file and map the IP addresses I added in the firewall to the databses I want them to access. 
 
-You can use `nano` or `vi` as text editors for this step. You need to add the non-commented code for each db and IP address combo.  If you are using `vi`, then insert using `i`, escape insert usinng the `esc`-key, and save/quit using `:wq`. 
+You can use `nano` or `vi` as text editors for this step. You need to add the non-commented code for each db and IP address combo. 
 
 ```zsh
 # Put your actual configuration here
@@ -173,35 +173,9 @@ host testdb  newuser public_ip_address/32 md5
 # "host" records.  In that case you will also need to make PostgreSQL
 # listen on a non-local interface via the listen_addresses
 # configuration parameter, or via the -i or -h command line switches.
+
 ```
 
-Next, I need to adjust the `postgresql.conf` file. I need to add the following. 
-
-Open file using `vi` or `nano`. 
-```zsh
-sudo vi postgresql.conf
-```
-
-Next, adjust the `listen_addresses` settings: 
-
-```zsh
-#------------------------------------------------------------------------------
-# CONNECTIONS AND AUTHENTICATION
-#------------------------------------------------------------------------------
-
-# - Connection Settings -
-
-#listen_addresses = 'localhost' # what IP address(es) to listen on;
-listen_addresses = 'localhost, computer_ip_address, droplet_ip_address'
-            # comma-separated list of addresses;
-```
-
-Then I restart PostgreSQL.
-
-```zsh 
-sudo systemctl restart postgresql
-```
-Now I can connect to the db using PgAdmin4 on my local computer and using Rstudio on my droplet. 
 
 
 

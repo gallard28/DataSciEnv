@@ -194,14 +194,13 @@ Next, adjust the `listen_addresses` settings:
 #listen_addresses = 'localhost' # what IP address(es) to listen on;
 listen_addresses = 'localhost, computer_ip_address, droplet_ip_address'
             # comma-separated list of addresses;
-```
 
+```
 Then I restart PostgreSQL.
 
 ```zsh 
 sudo systemctl restart postgresql
 ```
-Now I can connect to the db using PgAdmin4 on my local computer and using Rstudio on my droplet. 
 
 
 
