@@ -113,13 +113,13 @@ createuser newuser -d -l  -P
 -r -s --replication
 
 #If necessary, add other privileges for user such as CreateDB
-ALTER USER newuser WITH createdb;
+ALTER newuser WITH createdb;
 ```
 While it is not always necessary, I create a test db with my `newuser`. Using a testdb allows me to assure that I don't mess anything up when logging in for the first time.
 
-```zsh
+```psql
 #Create Database, assign to owner
-CREATE DATABASE testdb OWNER newuser;
+CREATE DATABASE testdb OWNER newsuer;
 
 ```
 
@@ -180,16 +180,14 @@ host testdb  newuser public_ip_address/32 md5
 # configuration parameter, or via the -i or -h command line switches.
 ```
 
-99.17.86.157Next, I need to adjust the `postgresql.conf` file. I need to add the following. 
+Next, I need to adjust the `postgresql.conf` file. I need to add the following. 
 
 Open file using `vi` or `nano`. 
 ```zsh
 sudo vi postgresql.conf
 ```
 
-Next, adjust the `listen_addresses` settings:
-
-** NOTE:** You will need the __server__ ipAddress rather than the droplet or local computer. 
+Next, adjust the `listen_addresses` settings: 
 
 ```zsh
 #------------------------------------------------------------------------------
@@ -199,7 +197,7 @@ Next, adjust the `listen_addresses` settings:
 # - Connection Settings -
 
 #listen_addresses = 'localhost' # what IP address(es) to listen on;
-listen_addresses = 'localhost, postgresql-server-ip-address'
+listen_addresses = 'localhost, computer_ip_address, droplet_ip_address'
             # comma-separated list of addresses;
 ```
 
@@ -208,25 +206,12 @@ Then I restart PostgreSQL.
 ```zsh 
 sudo systemctl restart postgresql
 ```
-Last, I check to make sure the connection can be established between local computer and server. 
-
-```zsh
-#Connect to server
-psql -U newuser -h server-ip-address -d testdb
-```
-
 Now I can connect to the db using PgAdmin4 on my local computer and using Rstudio on my droplet. 
 
-For PgAdmin4 connection, I click on "Add New Server".  
 
-![PgAdmin4-screenshot1.png](https://github.com/gallard28/DataSciEnv/blob/master/PgAdmin4-screenshot1.png)
 
-On the first page, enter a descriptive name for the db as you would like it to appear in PgAdmin4. 
 
-Next, select the **Connection** tab. 
-![PgAdmin4-screenshot2.png](https://github.com/gallard28/DataSciEnv/blob/master/PgAdmin4-screenshot2.png)
 
-Then, select **save**. 
 
 
 

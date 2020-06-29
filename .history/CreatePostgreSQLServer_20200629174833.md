@@ -208,25 +208,12 @@ Then I restart PostgreSQL.
 ```zsh 
 sudo systemctl restart postgresql
 ```
-Last, I check to make sure the connection can be established between local computer and server. 
-
-```zsh
-#Connect to server
-psql -U newuser -h server-ip-address -d testdb
-```
-
 Now I can connect to the db using PgAdmin4 on my local computer and using Rstudio on my droplet. 
 
-For PgAdmin4 connection, I click on "Add New Server".  
 
-![PgAdmin4-screenshot1.png](https://github.com/gallard28/DataSciEnv/blob/master/PgAdmin4-screenshot1.png)
 
-On the first page, enter a descriptive name for the db as you would like it to appear in PgAdmin4. 
 
-Next, select the **Connection** tab. 
-![PgAdmin4-screenshot2.png](https://github.com/gallard28/DataSciEnv/blob/master/PgAdmin4-screenshot2.png)
 
-Then, select **save**. 
 
 
 
