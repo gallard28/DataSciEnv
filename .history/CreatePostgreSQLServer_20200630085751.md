@@ -224,7 +224,6 @@ For PgAdmin4 connection, I click on "Add New Server".
 On the first page, enter a descriptive name for the db as you would like it to appear in PgAdmin4. 
 
 Next, select the **Connection** tab. 
-
 ![PgAdmin4-screenshot2.png](https://github.com/gallard28/DataSciEnv/blob/master/Iamges/PgAdmin4-screenshot2.png)
 
 Then, select **save**. 
