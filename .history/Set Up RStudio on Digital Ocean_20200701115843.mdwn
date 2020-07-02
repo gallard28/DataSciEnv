@@ -128,68 +128,17 @@ Please visit https://www.dropbox.com/cli_link_nonce?nonce=link to link this devi
 
 2) Make correct A records for pointing domain to droplet IP address. Be sure to set Time To Life (TTL) to 60 seconds. 
 
-3) Check that traffic is pointing by typing in yourdomainname:8787.
-
-Now I want to use Nginx to help me reverse proxy the domain name so we can connect over https and 
-
-### Install Certbot
-Before I get started, I need to install Certbot. 
-
-```zsh
-sudo add-apt-repository ppa:certbot/certbot
-```
-```zsh
-#Update packages 
-sudo apt-get update
-
-#Install certbot 
-sudo apt-get install certbot
-```
-
-```zsh
-#Adjust the firewall to open port 80, which certbot needs
-sudo ufw allow 80
-```
-
-```zsh
-sudo certbot certonly --standalone --preferred-challenges http -d datatechdemo.com
-``
-
-```zsh
-#Location of ssl key
-cd /etc/cd letsencrypt/live/
-```
-
-Update certbot for auto-renew
-```
-sudo nano /etc/letsencrypt/renewal/datatechdemo.com.conf
-```
-Add the following to the last line of `datatechdemo.com.conf`:
-
-
-```zsh
-renew_hook = systemctl reload rabbitmq
-```
-
-Then test the certbot in a dry run and see if it works.
-
-```zsh
-sudo certbot renew --dry-run
-```
-
-
-### Install Nginx - Need to figure out code here. 
+3) Check that traffic is pointing by typing in yourdomainname:8787
 
 Now I need to ssh into the droplet. I install nginx using the following command: 
 
 ```zsh
-sudo apt install nginx
+sudo apt-get install Nginx
 ```
 
-Then I need to add Nginx connections to my firewall. My goal is to create a secure TLS/SSL connection, so I will use the following commands. 
+Then I need to add Nginx connections to my firewall. My goal is to create a secure TLS/SSL connection, so I will use the following command. 
 
 ```zsh
-sudo ufw allow 'Nginx HTTP'
 sudo ufw allow 'Nginx HTTPS'
 ```
 
@@ -198,7 +147,7 @@ Next,  I check the status of the Nginx system install.
 ```zsh
 systemctl status nginx
 ```
-It should retrun something as follows. It needs to say "active (running)."
+It should retrun somethingas follows. It needs to say "active (running)."
 ```
 ● nginx.service - A high performance web server and a reverse proxy server
    Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: en
@@ -209,70 +158,5 @@ It should retrun something as follows. It needs to say "active (running)."
    CGroup: /system.slice/nginx.service
            ├─25052 nginx: master process /usr/sbin/nginx -g daemon on; master_pr
            └─25055 nginx: worker process
-```
-
-Next I edit the `nginx.conf` file.
-
-```zsh
-sudo nano /etc/nginx/nginx.conf
-```
-
-I insert the following settings in the `http` block. 
-
-```
-http {
-    ...
-    # Map proxy settings for RStudio
-        map $http_upgrade $connection_upgrade {
-            default upgrade;
-            '' close;
-        }
-}
-```
-
-Next I adjust the sites-available script. 
-
-```
-sudo nano /etc/nginx/sites-available/datactechdemo.com
-```
-Add the following into the blank file:
-
-```
-server {
-   listen 80 default_server;
-   listen [::]:80 default_server ipv6only=on;
-   server_name datatechdemo.com www.datatechdemo.com ;
-   return 301 https://$server_name$request_uri;
-}
-server {
-   listen 443 ssl;
-   server_name datatechdemo.com www.datatechdemo.com;
-   ssl_certificate /etc/letsencrypt/live/datatechdemo.com/fullchain.pem;
-   ssl_certificate_key /etc/letsencrypt/live/datatechdemo.com/privkey.pem;
-   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-   ssl_prefer_server_ciphers on;
-   ssl_ciphers AES256+EECDH:AES256+EDH:!aNULL;
-
-   location / {
-       proxy_pass http://your_server_ip:3838;
-       proxy_redirect http://your_server_ip:3838/ https://$host/;
-       proxy_http_version 1.1;
-       proxy_set_header Upgrade $http_upgrade;
-       proxy_set_header Connection $connection_upgrade;
-       proxy_read_timeout 20d;
-   }
-}
-```
-
-Next, I create a sym link to the sites-enabled directory. 
-
-```
-sudo ln -s /etc/nginx/sites-available/datatechdemo.com  /etc/nginx/sites-enabled/datatechdemo.com 
-```
-
-Now I need to disable the default sites-enabled script. 
-
-```
-sudo rm -f /etc/nginx/sites-enabled/default
 ```
 

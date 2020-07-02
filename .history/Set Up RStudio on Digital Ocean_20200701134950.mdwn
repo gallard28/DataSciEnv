@@ -128,9 +128,7 @@ Please visit https://www.dropbox.com/cli_link_nonce?nonce=link to link this devi
 
 2) Make correct A records for pointing domain to droplet IP address. Be sure to set Time To Life (TTL) to 60 seconds. 
 
-3) Check that traffic is pointing by typing in yourdomainname:8787.
-
-Now I want to use Nginx to help me reverse proxy the domain name so we can connect over https and 
+3) Check that traffic is pointing by typing in yourdomainname:8787
 
 ### Install Certbot
 Before I get started, I need to install Certbot. 
@@ -178,18 +176,19 @@ sudo certbot renew --dry-run
 ```
 
 
-### Install Nginx - Need to figure out code here. 
+
+
+### Instal Nginx
 
 Now I need to ssh into the droplet. I install nginx using the following command: 
 
 ```zsh
-sudo apt install nginx
+sudo apt-get install Nginx
 ```
 
-Then I need to add Nginx connections to my firewall. My goal is to create a secure TLS/SSL connection, so I will use the following commands. 
+Then I need to add Nginx connections to my firewall. My goal is to create a secure TLS/SSL connection, so I will use the following command. 
 
 ```zsh
-sudo ufw allow 'Nginx HTTP'
 sudo ufw allow 'Nginx HTTPS'
 ```
 
@@ -223,10 +222,10 @@ I insert the following settings in the `http` block.
 http {
     ...
     # Map proxy settings for RStudio
-        map $http_upgrade $connection_upgrade {
-            default upgrade;
-            '' close;
-        }
+    map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+    }
 }
 ```
 
@@ -276,3 +275,14 @@ Now I need to disable the default sites-enabled script.
 sudo rm -f /etc/nginx/sites-enabled/default
 ```
 
+Lastly, before testing my nginx service, I need to install my SSL certificate. Digital Ocean recommends using certbot, which I do. 
+
+```zsh
+sudo apt-get install python-certbot-nginx
+```
+
+Now I need to get my certificate. 
+
+```
+sudo certbot --nginx -d datatechdemo.com -d www.datatechdemo.com
+```
